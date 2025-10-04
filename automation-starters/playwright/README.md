@@ -1,23 +1,10 @@
-# Playwright UI Automation Starter
+# UI Testing with Playwright
 
-This is a starter template for UI automation testing using Playwright for the Sustaining.ai Lite application.
+This directory contains starter templates for UI test automation using Playwright.
 
-## Setup Instructions
+## Setup
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   npx playwright install
-   ```
-
-2. **Set environment variables:**
-   ```bash
-   # Create .env file (optional)
-   BASE_URL=http://localhost:3001
-   API_URL=http://localhost:3001
-   ```
-
-3. **Start the mock API server:**
+1. **Start the mock API server:**
    ```bash
    cd ../../mock-api
    npm install
@@ -25,214 +12,186 @@ This is a starter template for UI automation testing using Playwright for the Su
    ```
    Keep this running in a separate terminal.
 
-4. **Run tests:**
+2. **Install dependencies:**
    ```bash
-   # Run all tests
-   npm test
-
-   # Run with browser UI visible
-   npm run test:headed
-
-   # Run in debug mode
-   npm run test:debug
-
-   # Run with Playwright UI mode
-   npm run test:ui
+   npm install
    ```
 
-## Project Structure
+3. **Install browsers:**
+   ```bash
+   npx playwright install
+   ```
 
+## Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in headed mode (see browser)
+npm run test:headed
+
+# Run tests in specific browser
+npx playwright test --project=chromium
+npx playwright test --project=firefox
+npx playwright test --project=webkit
+
+# Run specific test file
+npx playwright test tests/ui-starter.spec.ts
+
+# Run with debug mode
+npx playwright test --debug
+
+# Generate test report
+npx playwright show-report
 ```
-playwright/
-├── tests/
-│   └── ui-tests.spec.ts       # Main test file with examples
-├── playwright.config.ts       # Playwright configuration
-├── package.json              # Dependencies and scripts
-└── README.md                 # This file
-```
 
-## Key Features
+## Test Structure
 
-### Page Object Model
-The tests use Page Object Model (POM) pattern for better maintainability:
-- `LoginPage` - Login functionality
-- `DashboardPage` - Main application features
-- `AdminUploadPage` - File upload functionality
+- `tests/ui-starter.spec.ts` - Example UI test patterns and starter code
+- `tests/example.spec.ts` - Simple example test
+- `playwright.config.ts` - Playwright configuration
+- `package.json` - Dependencies and scripts
 
-### Test Data Configuration
-Centralized test data in `TEST_CONFIG` object:
-- User credentials for different roles
-- Test questions and companies
-- Environment URLs
+## Getting Started
 
-### Robust Selectors
-Tests use `data-testid` attributes for stable element selection:
+The `ui-starter.spec.ts` file contains:
+- Page Object Model examples
+- Basic test structure patterns
+- Authentication helpers
+- TODO comments for expansion areas
+
+## Your Task
+
+Expand the starter tests to create comprehensive UI test coverage:
+
+1. **Authentication Tests**: Login flows, error handling, session management
+2. **Question Submission**: Form validation, submission process, result display
+3. **File Upload**: CSV upload functionality, validation, error handling
+4. **Navigation**: Page transitions, routing, user experience
+5. **Responsive Design**: Cross-browser testing, mobile compatibility
+6. **Performance**: Load times, responsiveness, user interaction timing
+
+## Key Areas to Test
+
+### User Authentication
+- Valid login redirects to dashboard
+- Invalid credentials show error messages
+- Logout functionality works correctly
+- Session timeout handling
+
+### Question & Answer Flow
+- Question form accepts valid inputs
+- Company selection works properly
+- Submit button triggers correct API calls
+- Results display correctly
+- Real-time updates work as expected
+
+### File Upload
+- CSV file upload succeeds for admin users
+- Non-CSV files are rejected
+- Upload progress indicators work
+- Error messages display appropriately
+
+### User Interface
+- All navigation links work
+- Forms validate inputs properly
+- Loading states display correctly
+- Error messages are user-friendly
+
+## Page Object Model Pattern
+
 ```typescript
-await this.page.fill('[data-testid="email-input"]', email);
-```
-
-## Sample Test Cases Included
-
-1. **Authentication Flow**
-   - Valid login redirects to dashboard
-   - Invalid credentials show error message
-
-2. **Question Submission**
-   - Submit valid question displays job ID
-   - Job status updates in real-time
-   - Completed job shows answer and confidence
-   - Empty question shows validation error
-
-3. **Role-based Access Control**
-   - Admin can access upload page, Analyst cannot
-
-4. **Edge Cases**
-   - Unicode characters in question field
-   - Very long question handling
-
-## Writing New Tests
-
-### Basic Test Structure
-```typescript
-test('Test description', async ({ page }) => {
-  // Arrange
-  await page.goto('/some-page');
-  
-  // Act
-  await page.click('[data-testid="button"]');
-  
-  // Assert
-  await expect(page.locator('[data-testid="result"]')).toBeVisible();
-});
-```
-
-### Using Page Objects
-```typescript
-test('Example with page objects', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  const dashboardPage = new DashboardPage(page);
-  
-  await loginPage.goto();
-  await loginPage.login('user@test.com', 'password');
-  await dashboardPage.isLoaded();
-});
+class LoginPage {
+    constructor(private page: Page) {}
+    
+    get emailInput() { return this.page.locator('#email'); }
+    get passwordInput() { return this.page.locator('#password'); }
+    get loginButton() { return this.page.locator('button[type="submit"]'); }
+    
+    async login(email: string, password: string) {
+        await this.emailInput.fill(email);
+        await this.passwordInput.fill(password);
+        await this.loginButton.click();
+    }
+}
 ```
 
 ## Best Practices
 
-### Selector Strategy
-1. **Preferred:** Use `data-testid` attributes
-2. **Alternative:** Use semantic selectors (role, label)
-3. **Avoid:** CSS classes or XPath
+- Use Page Object Model for maintainable tests
+- Wait for elements to be ready before interacting
+- Use meaningful test descriptions
+- Test both happy path and error scenarios
+- Verify visual elements and user feedback
+- Test across different browsers and screen sizes
+- Include accessibility testing
 
-### Wait Strategies
+## Configuration
+
+### Test Users
+- **Analyst:** analyst@test.com / TestPass123!
+- **Admin:** admin@test.com / AdminPass123!
+
+### Application URL
+- Default: `http://localhost:3001`
+- Configured in `playwright.config.ts`
+
+## Browser Support
+
+Tests are configured to run on:
+- Chromium (Chrome/Edge)
+- Firefox
+- WebKit (Safari)
+
+## Example Test Pattern
+
 ```typescript
-// Wait for element to be visible
-await page.waitForSelector('[data-testid="element"]');
-
-// Wait for custom condition
-await page.waitForFunction(() => window.someCondition);
-
-// Use built-in expects with auto-wait
-await expect(page.locator('[data-testid="element"]')).toBeVisible();
+test('should perform user action', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+    await page.goto('http://localhost:3001');
+    
+    // Act
+    await loginPage.login('user@test.com', 'password');
+    
+    // Assert
+    await expect(page).toHaveURL(/dashboard/);
+    await expect(page.locator('.welcome-message')).toBeVisible();
+});
 ```
 
-### Error Handling
+## Debugging Tips
+
+- Use `--debug` flag to step through tests
+- Use `page.pause()` to pause execution
+- Take screenshots: `await page.screenshot({ path: 'debug.png' })`
+- Use browser developer tools in headed mode
+- Check console logs: `page.on('console', console.log)`
+
+## Visual Testing
+
+Playwright supports visual regression testing:
+
 ```typescript
-try {
-  await page.click('[data-testid="button"]', { timeout: 5000 });
-} catch (error) {
-  // Handle timeout or other errors
-  console.log('Button not found or not clickable');
-}
+// Take screenshot and compare
+await expect(page).toHaveScreenshot('login-page.png');
+
+// Compare specific element
+await expect(page.locator('.dashboard')).toHaveScreenshot('dashboard.png');
 ```
 
-## Configuration Options
+## Mobile Testing
 
-### Browser Configuration
-The project is configured to run on:
-- Desktop: Chrome, Firefox, Safari
-- Mobile: Chrome (Pixel 5), Safari (iPhone 12)
+Test responsive design:
 
-### Reporting
-- HTML report: `npm run test:report`
-- JSON results: Available in `test-results.json`
-
-### Screenshots and Videos
-- Screenshots: Taken on test failure
-- Videos: Recorded for failed tests
-- Traces: Available for debugging
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `BASE_URL` | Application base URL | `http://localhost:3001` |
-| `API_URL` | API base URL | `http://localhost:3001` |
-| `CI` | CI environment flag | - |
-
-## Tips for Success
-
-1. **Start Simple:** Begin with basic login and navigation tests
-2. **Use Page Objects:** Organize code for reusability
-3. **Stable Selectors:** Request `data-testid` attributes from developers
-4. **Wait Appropriately:** Use Playwright's auto-waiting features
-5. **Test Data:** Keep test data separate and configurable
-6. **Debug Effectively:** Use `--debug` mode and screenshots
-
-## Common Issues
-
-### Element Not Found
 ```typescript
-// Instead of this:
-await page.click('.some-class');
-
-// Use this:
-await page.click('[data-testid="element"]');
-await expect(page.locator('[data-testid="element"]')).toBeVisible();
+// Emulate mobile device
+test('mobile login', async ({ browser }) => {
+    const context = await browser.newContext({
+        viewport: { width: 375, height: 667 }, // iPhone SE
+    });
+    const page = await context.newPage();
+    // ... test mobile-specific behavior
+});
 ```
-
-### Timing Issues
-```typescript
-// Instead of hardcoded waits:
-await page.waitForTimeout(5000);
-
-// Use condition-based waits:
-await page.waitForSelector('[data-testid="loaded"]');
-await expect(page.locator('[data-testid="result"]')).toContainText('Expected');
-```
-
-### Flaky Tests
-- Use built-in auto-waiting mechanisms
-- Avoid hardcoded timeouts
-- Use stable selectors
-- Handle dynamic content properly
-
-## Next Steps
-
-1. **Expand Test Coverage:**
-   - Add more edge cases
-   - Test error scenarios
-   - Add cross-browser specific tests
-
-2. **Enhance Framework:**
-   - Add custom fixtures
-   - Implement test data management
-   - Add helper utilities
-
-3. **CI/CD Integration:**
-   - Add GitHub Actions workflow
-   - Configure parallel execution
-   - Set up test reporting
-
-4. **Advanced Features:**
-   - API mocking with Playwright
-   - Visual regression testing
-   - Performance monitoring
-
-## Resources
-
-- [Playwright Documentation](https://playwright.dev/)
-- [Best Practices Guide](https://playwright.dev/docs/best-practices)
-- [Page Object Model](https://playwright.dev/docs/pom)
-- [Test Configuration](https://playwright.dev/docs/test-configuration)

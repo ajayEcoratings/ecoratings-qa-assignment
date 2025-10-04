@@ -1,0 +1,457 @@
+openapi: 3.0.3
+info:
+  title: Sustaining.ai Lite API
+  description: ESG Question-Answering System API
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api-support@sustaining.ai
+
+servers:
+  - url: http://localhost:3001
+    description: Local mock server
+  - url: https://api.sustaining-lite.dev
+    description: Development server (not available)
+  - url: https://api.sustaining-lite.staging
+    description: Staging server (not available)
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Logout current user session
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout successful"
+
+  /api/v1/qa:
+    post:
+      tags:
+        - Question & Answer
+      summary: Submit ESG question
+      description: Submit a question about a company and receive a job ID for tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+      responses:
+        '202':
+          description: Question accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      tags:
+        - Question & Answer
+      summary: Get recent answers
+      description: Retrieve the last 10 answers for the current user
+      responses:
+        '200':
+          description: Recent answers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answers:
+                    type: array
+                    maxItems: 10
+                    items:
+                      $ref: '#/components/schemas/Answer'
+
+  /api/v1/qa/{jobId}:
+    get:
+      tags:
+        - Question & Answer
+      summary: Get job status
+      description: Retrieve the status and result of a submitted question job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The job ID returned from question submission
+      responses:
+        '200':
+          description: Job status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/admin/companies/upload:
+    post:
+      tags:
+        - Admin
+      summary: Upload company data
+      description: Upload CSV file with company metadata (Admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: CSV file with company data
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: Bad request - invalid file or format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large (max 2MB)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type - only CSV allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /aiml/answer:
+    post:
+      tags:
+        - AIML Service
+      summary: Process question with AI
+      description: Internal service endpoint for AI processing
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIMLRequest'
+      responses:
+        '200':
+          description: Answer generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIMLResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "analyst@sustaining.ai"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: "SecurePassword123!"
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT authentication token
+        user:
+          $ref: '#/components/schemas/User'
+        expiresIn:
+          type: integer
+          description: Token expiration time in seconds
+          example: 3600
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [Admin, Analyst]
+        name:
+          type: string
+
+    QuestionRequest:
+      type: object
+      required:
+        - question
+        - company
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: ESG question about the company
+          example: "What are the Scope 1 emissions for this company?"
+        company:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Company name or identifier
+          example: "Nokia"
+
+    JobResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          description: Unique identifier for the submitted job
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        status:
+          type: string
+          enum: [queued]
+          example: "queued"
+        submittedAt:
+          type: string
+          format: date-time
+
+    JobStatus:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, done, failed]
+        submittedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        result:
+          $ref: '#/components/schemas/Answer'
+          nullable: true
+        error:
+          type: string
+          nullable: true
+          description: Error message if status is failed
+
+    Answer:
+      type: object
+      properties:
+        question:
+          type: string
+        company:
+          type: string
+        answer:
+          type: string
+          description: AI-generated answer
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score for the answer
+        timestamp:
+          type: string
+          format: date-time
+
+    AIMLRequest:
+      type: object
+      required:
+        - question
+        - company
+      properties:
+        question:
+          type: string
+        company:
+          type: string
+
+    AIMLResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+          description: Generated answer
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score
+
+    UploadResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "File uploaded successfully"
+        processedRows:
+          type: integer
+          description: Number of rows processed
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+              message:
+                type: string
+          description: Validation errors for specific rows
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+          nullable: true

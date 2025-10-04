@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustaining.ai Lite - Mock Frontend</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .endpoints {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .endpoint {
+            margin: 10px 0;
+            font-family: monospace;
+            background: white;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+        }
+        .test-users {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        code {
+            background: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .warning {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Sustaining.ai Lite Mock API</h1>
+        
+        <div class="status">
+            <strong>✅ Mock API Server is running!</strong><br>
+            This page confirms that the mock backend is working correctly.
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Testing Assignment Note:</strong><br>
+            This is a mock API for testing purposes only. For the assignment, test the API endpoints directly rather than this basic HTML page.
+        </div>
+
+        <h2>📋 Available API Endpoints</h2>
+        <div class="endpoints">
+            <div class="endpoint"><strong>POST</strong> /api/v1/auth/login - User authentication</div>
+            <div class="endpoint"><strong>POST</strong> /api/v1/auth/logout - User logout</div>
+            <div class="endpoint"><strong>POST</strong> /api/v1/qa - Submit ESG question</div>
+            <div class="endpoint"><strong>GET</strong> /api/v1/qa/{jobId} - Get job status</div>
+            <div class="endpoint"><strong>GET</strong> /api/v1/qa - Get recent answers</div>
+            <div class="endpoint"><strong>POST</strong> /api/v1/admin/companies/upload - Upload CSV (Admin only)</div>
+            <div class="endpoint"><strong>POST</strong> /aiml/answer - AIML service endpoint</div>
+            <div class="endpoint"><strong>WebSocket</strong> ws://localhost:3001 - Real-time updates</div>
+        </div>
+
+        <h2>👤 Test User Accounts</h2>
+        <div class="test-users">
+            <strong>Analyst User:</strong><br>
+            Email: <code>analyst@test.com</code><br>
+            Password: <code>TestPass123!</code><br><br>
+            
+            <strong>Admin User:</strong><br>
+            Email: <code>admin@test.com</code><br>
+            Password: <code>AdminPass123!</code>
+        </div>
+
+        <h2>🧪 Quick API Test</h2>
+        <p>Try this curl command to test the login endpoint:</p>
+        <div class="endpoints">
+            <div class="endpoint">
+                curl -X POST http://localhost:3001/api/v1/auth/login \<br>
+                &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+                &nbsp;&nbsp;-d '{"email":"analyst@test.com","password":"TestPass123!"}'
+            </div>
+        </div>
+
+        <h2>📚 Documentation</h2>
+        <p>
+            <strong>API Reference:</strong> <code>/docs/api-reference.md</code><br>
+            <strong>OpenAPI Spec:</strong> <code>/docs/api-spec.yaml</code><br>
+            <strong>Mock Server Code:</strong> <code>/mock-api/server.js</code>
+        </p>
+
+        <h2>🔧 Server Information</h2>
+        <p>
+            <strong>Server URL:</strong> http://localhost:3001<br>
+            <strong>WebSocket URL:</strong> ws://localhost:3001<br>
+            <strong>Health Check:</strong> <a href="/health">/health</a>
+        </p>
+
+        <div class="status">
+            <strong>Ready for Testing!</strong><br>
+            The mock API provides all features described in the assignment. Start with authentication, then test the question submission flow.
+        </div>
+    </div>
+</body>
+</html>

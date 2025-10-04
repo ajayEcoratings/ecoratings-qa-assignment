@@ -1,0 +1,66 @@
+# Test Results and Internal Files (not for candidates)
+TEST-RESULTS.md
+test-results/
+reports/
+*.log
+
+# Node modules (will be installed by candidates)
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.pytest_cache/
+
+# Playwright generated files
+playwright-report/
+test-results/
+*.png
+*.webm
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Temporary test files
+*.csv
+test-*.txt
+temp-*
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Package files
+*.tgz
+*.tar.gz
+package-lock.json
+
+# Environment files with secrets
+.env.local
+.env.production
+
+# Build outputs
+dist/
+build/
+
+# Logs
+logs/
+*.log

@@ -2,11 +2,9 @@
 
 ## Assignment Overview
 
-Welcome to the QA Engineer assignment for Sustaining.ai Lite! This is a practical testing challenge designed to evaluate your testing skills across manual testing, automation, and performance testing.
+ Test Engineer assignment, This is a practical testing challenge designed to evaluate your testing skills across manual testing, automation, and performance testing.
 
-**Time Allocation:** 2-3 days  
-
-## Product Under Test: Sustaining.ai Lite
+## MOCK Product Under Test: Sustaining.ai Lite
 
 Sustaining.ai Lite is a simplified ESG (Environmental, Social, Governance) question-answering web application that helps users get AI-powered insights about companies' sustainability practices.
 

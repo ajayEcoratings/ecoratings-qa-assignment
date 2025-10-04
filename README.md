@@ -4,8 +4,7 @@
 
 Welcome to the QA Engineer assignment for Sustaining.ai Lite! This is a practical testing challenge designed to evaluate your testing skills across manual testing, automation, and performance testing.
 
-**Time Allocation:** 6-8 hours  
-**Difficulty:** Intermediate  
+**Time Allocation:** 2-3 days  
 
 ## Product Under Test: Sustaining.ai Lite
 
